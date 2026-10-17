@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Espaços - Agenda Escolar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Cadastro de Espaços</h2>
+        <div>
+            <a href="/" class="btn btn-outline-secondary me-2">Voltar</a>
+            <a href="/espacos/novo" class="btn btn-primary">+ Novo Espaço</a>
+        </div>
+    </div>
+
+    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagemSucesso}"></span>
+    </div>
+    <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${mensagemErro}"></span>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(espacos)}" class="alert alert-info mb-0 text-center">
+                Nenhum espaço cadastrado até o momento.
+            </div>
+
+            <table th:if="${!#lists.isEmpty(espacos)}" class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Espaço</th>
+                    <th>Capacidade Máxima</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="espaco : ${espacos}">
+                    <td th:text="${espaco.id}">1</td>
+                    <td th:text="${espaco.nome}" class="fw-bold">Auditório Main</td>
+                    <td th:text="${espaco.capacidade} + ' pessoas'">100 pessoas</td>
+                    <td class="text-center">
+                        <a th:href="@{/espacos/editar/{id}(id=${espaco.id})}" class="btn btn-sm btn-outline-warning me-1">Editar</a>
+                        <form th:action="@{/espacos/excluir/{id}(id=${espaco.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Tem certeza que deseja excluir este espaço?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

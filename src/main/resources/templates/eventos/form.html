@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário de Agendamento - Agenda Escolar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0" th:text="${eventoDTO.id == null ? 'Agendar Evento' : 'Editar Evento'}">Evento</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mensagem de Regra de Negócio (ex: Conflito de Horário) -->
+                    <div th:if="${mensagemErro}" class="alert alert-danger" th:text="${mensagemErro}"></div>
+
+                    <form th:action="@{/eventos/salvar}" th:object="${eventoDTO}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título do Evento <span class="text-danger">*</span></label>
+                            <input type="text" th:field="*{titulo}" id="titulo" class="form-control"
+                                   th:classappend="${#fields.hasErrors('titulo')} ? 'is-invalid'" />
+                            <div class="invalid-feedback" th:errors="*{titulo}">Erro</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea th:field="*{descricao}" id="descricao" class="form-control" rows="3"
+                                      th:classappend="${#fields.hasErrors('descricao')} ? 'is-invalid'"></textarea>
+                            <div class="invalid-feedback" th:errors="*{descricao}">Erro</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="responsavel" class="form-label">Responsável <span class="text-danger">*</span></label>
+                                <input type="text" th:field="*{responsavel}" id="responsavel" class="form-control"
+                                       th:classappend="${#fields.hasErrors('responsavel')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:errors="*{responsavel}">Erro</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="emailResponsavel" class="form-label">E-mail do Responsável <span class="text-danger">*</span></label>
+                                <input type="email" th:field="*{emailResponsavel}" id="emailResponsavel" class="form-control"
+                                       th:classappend="${#fields.hasErrors('emailResponsavel')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:errors="*{emailResponsavel}">Erro</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="inicio" class="form-label">Data e Hora de Início <span class="text-danger">*</span></label>
+                                <input type="datetime-local" th:field="*{inicio}" id="inicio" class="form-control"
+                                       th:classappend="${#fields.hasErrors('inicio')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:errors="*{inicio}">Erro</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="termino" class="form-label">Data e Hora de Término <span class="text-danger">*</span></label>
+                                <input type="datetime-local" th:field="*{termino}" id="termino" class="form-control"
+                                       th:classappend="${#fields.hasErrors('termino')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:errors="*{termino}">Erro</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="publicoPrevisto" class="form-label">Público Previsto <span class="text-danger">*</span></label>
+                                <input type="number" th:field="*{publicoPrevisto}" id="publicoPrevisto" class="form-control"
+                                       th:classappend="${#fields.hasErrors('publicoPrevisto')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:errors="*{publicoPrevisto}">Erro</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="espacoId" class="form-label">Espaço Selecionado <span class="text-danger">*</span></label>
+                                <select th:field="*{espacoId}" id="espacoId" class="form-select"
+                                        th:classappend="${#fields.hasErrors('espacoId')} ? 'is-invalid'">
+                                    <option value="">-- Selecione o Espaço --</option>
+                                    <option th:each="e : ${espacos}" th:value="${e.id}"
+                                            th:text="${e.nome + ' (Capacidade: ' + e.capacidade + ')'}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:errors="*{espacoId}">Erro</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="/eventos" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Salvar Agendamento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

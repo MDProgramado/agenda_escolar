@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventos - Agenda Escolar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Programação de Eventos</h2>
+        <div>
+            <a href="/" class="btn btn-outline-secondary me-2">Voltar</a>
+            <a href="/eventos/novo" class="btn btn-primary">+ Agendar Evento</a>
+        </div>
+    </div>
+
+    <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagemSucesso}"></span>
+    </div>
+
+    <!-- Filtros (RF06) -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/eventos}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="data" class="form-label">Data de Início</label>
+                    <input type="date" name="data" id="data" class="form-control" th:value="${dataFiltro}" />
+                </div>
+                <div class="col-md-4">
+                    <label for="espacoId" class="form-label">Espaço</label>
+                    <select name="espacoId" id="espacoId" class="form-select">
+                        <option value="">-- Todos os Espaços --</option>
+                        <option th:each="e : ${espacos}" th:value="${e.id}" th:text="${e.nome}" th:selected="${e.id == espacoIdFiltro}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="situacao" class="form-label">Situação</label>
+                    <select name="situacao" id="situacao" class="form-select">
+                        <option value="">-- Todas as Situações --</option>
+                        <option value="AGENDADO" th:selected="${situacaoFiltro?.name() == 'AGENDADO'}">AGENDADO</option>
+                        <option value="CANCELADO" th:selected="${situacaoFiltro?.name() == 'CANCELADO'}">CANCELADO</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary w-100">Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela de Eventos -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(eventos)}" class="alert alert-info mb-0 text-center">
+                Nenhum evento encontrado para os critérios selecionados.
+            </div>
+
+            <table th:if="${!#lists.isEmpty(eventos)}" class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Título</th>
+                    <th>Espaço</th>
+                    <th>Início</th>
+                    <th>Término</th>
+                    <th>Situação</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ev : ${eventos}">
+                    <td th:text="${ev.titulo}" class="fw-bold">Palestra Técnica</td>
+                    <td th:text="${ev.espaco.nome}">Auditório</td>
+                    <td th:text="${#temporals.format(ev.inicio, 'dd/MM/yyyy HH:mm')}">01/01/2026 14:00</td>
+                    <td th:text="${#temporals.format(ev.termino, 'dd/MM/yyyy HH:mm')}">01/01/2026 16:00</td>
+                    <td>
+                        <span th:if="${ev.situacao.name() == 'AGENDADO'}" class="badge bg-success">AGENDADO</span>
+                        <span th:if="${ev.situacao.name() == 'CANCELADO'}" class="badge bg-danger">CANCELADO</span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/eventos/{id}(id=${ev.id})}" class="btn btn-sm btn-outline-info me-1">Detalhes</a>
+                        <a th:if="${ev.situacao.name() == 'AGENDADO'}"
+                           th:href="@{/eventos/editar/{id}(id=${ev.id})}" class="btn btn-sm btn-outline-warning">Editar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

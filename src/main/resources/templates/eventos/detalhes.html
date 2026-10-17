@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Evento - Agenda Escolar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show">
+                <span th:text="${mensagemSucesso}"></span>
+            </div>
+            <div th:if="${mensagemErro}" class="alert alert-danger alert-dismissible fade show">
+                <span th:text="${mensagemErro}"></span>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0" th:text="${evento.titulo}">Título do Evento</h4>
+                    <div>
+                        <span th:if="${evento.situacao.name() == 'AGENDADO'}" class="badge bg-success fs-6">AGENDADO</span>
+                        <span th:if="${evento.situacao.name() == 'CANCELADO'}" class="badge bg-danger fs-6">CANCELADO</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">ID do Evento:</div>
+                        <div class="col-sm-9" th:text="${evento.id}">1</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Descrição:</div>
+                        <div class="col-sm-9" th:text="${evento.descricao != null && !evento.descricao.isBlank() ? evento.descricao : 'Sem descrição informada.'}">
+                            Descrição do evento
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Espaço:</div>
+                        <div class="col-sm-9" th:text="${evento.espaco.nome + ' (Capacidade max: ' + evento.espaco.capacidade + ')'}">Auditório</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Horário de Início:</div>
+                        <div class="col-sm-9" th:text="${#temporals.format(evento.inicio, 'dd/MM/yyyy HH:mm')}">01/01/2026 14:00</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Horário de Término:</div>
+                        <div class="col-sm-9" th:text="${#temporals.format(evento.termino, 'dd/MM/yyyy HH:mm')}">01/01/2026 16:00</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Público Previsto:</div>
+                        <div class="col-sm-9" th:text="${evento.publicoPrevisto} + ' pessoas'">50 pessoas</div>
+                    </div>
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Responsável:</div>
+                        <div class="col-sm-9" th:text="${evento.responsavel}">Prof. Carlos</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">E-mail:</div>
+                        <div class="col-sm-9" th:text="${evento.emailResponsavel}">carlos@escola.com</div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="/eventos" class="btn btn-secondary">Voltar para a lista</a>
+                    <div>
+                        <a th:if="${evento.situacao.name() == 'AGENDADO'}"
+                           th:href="@{/eventos/editar/{id}(id=${evento.id})}" class="btn btn-warning me-2">Editar</a>
+                        <form th:if="${evento.situacao.name() == 'AGENDADO'}"
+                              th:action="@{/eventos/{id}/cancelar(id=${evento.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Tem certeza que deseja CANCELAR este agendamento?');">
+                            <button type="submit" class="btn btn-danger">Cancelar Evento</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
